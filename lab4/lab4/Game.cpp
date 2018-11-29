@@ -13,7 +13,8 @@ Game::Game() :
 	m_exitGame{ false } //when true game will exit
 {
 	setupFontAndText(); // load font 
-	setupSprite(); // load texture
+	setupGround(); // load texture
+	setupBase();
 }
 
 /// <summary>
@@ -87,9 +88,9 @@ void Game::update(sf::Time t_deltaTime)
 /// </summary>
 void Game::render()
 {
-	m_window.clear(sf::Color::White);
-	m_window.draw(m_welcomeMessage);
-	m_window.draw(m_logoSprite);
+	m_window.clear();
+	m_window.draw(base);
+	m_window.draw(ground);
 	m_window.display();
 }
 
@@ -116,13 +117,28 @@ void Game::setupFontAndText()
 /// <summary>
 /// load the texture and setup the sprite for the logo
 /// </summary>
-void Game::setupSprite()
+void Game::setupGround()
 {
-	if (!m_logoTexture.loadFromFile("ASSETS\\IMAGES\\SFML-LOGO.png"))
-	{
-		// simple error message if previous call fails
-		std::cout << "problem loading logo" << std::endl;
-	}
-	m_logoSprite.setTexture(m_logoTexture);
-	m_logoSprite.setPosition(300.0f, 180.0f);
+	 ground.setSize(sf::Vector2f(800, 50));
+	 ground.setFillColor(sf::Color(0,100,0));
+	 ground.setPosition(0,550);
 }
+
+
+
+/// <summary>
+/// load the texture and setup the sprite for the logo
+/// </summary>
+void Game::setupBase()
+{
+	base.setSize(sf::Vector2f(50,50));
+	base.setFillColor(sf::Color(255, 255, 0));
+	base.setPosition(375, 500);
+}
+
+//void Game::setupLaser()
+//{
+//	base.setSize(sf::Vector2f(50, 50));
+//	base.setFillColor(sf::Color(255, 255, 0));
+//	base.setPosition(350, 500);
+//}
