@@ -2,7 +2,7 @@
 
 #include "Game.h"
 #include <iostream>
-
+#include "MyVector2.h"
 
 /// <summary>
 /// default construcor
@@ -15,6 +15,7 @@ Game::Game() :
 	setupFontAndText(); // load font 
 	setupGround(); // load texture
 	setupBase();
+	setupLaser();
 }
 
 /// <summary>
@@ -68,6 +69,11 @@ void Game::processEvents()
 				m_exitGame = true;
 			}
 		}
+		
+	}
+	if (sf::Event::MouseButtonPressed == event.type)
+	{
+		processMouseEvents(event); // keep code tidy
 	}
 }
 
@@ -89,8 +95,9 @@ void Game::update(sf::Time t_deltaTime)
 void Game::render()
 {
 	m_window.clear();
-	m_window.draw(base);
-	m_window.draw(ground);
+	m_window.draw(m_base);
+	m_window.draw(m_ground);
+	m_window.draw(m_laser);
 	m_window.display();
 }
 
@@ -119,9 +126,9 @@ void Game::setupFontAndText()
 /// </summary>
 void Game::setupGround()
 {
-	 ground.setSize(sf::Vector2f(800, 50));
-	 ground.setFillColor(sf::Color(0,100,0));
-	 ground.setPosition(0,550);
+	 m_ground.setSize(sf::Vector2f(800, 50));
+	 m_ground.setFillColor(sf::Color(0,100,0));
+	 m_ground.setPosition(0,550);
 }
 
 
@@ -131,14 +138,31 @@ void Game::setupGround()
 /// </summary>
 void Game::setupBase()
 {
-	base.setSize(sf::Vector2f(50,50));
-	base.setFillColor(sf::Color(255, 255, 0));
-	base.setPosition(375, 500);
+	m_base.setSize(sf::Vector2f(50,50));
+	m_base.setFillColor(sf::Color(255, 255, 0));
+	m_base.setPosition(375, 500);
 }
 
-//void Game::setupLaser()
+void Game::setupLaser()
+{
+	m_laser.setSize(sf::Vector2f(0,0));
+	m_laser.setFillColor(sf::Color(255, 0, 0));
+	m_laser.setPosition(m_base.getPosition().x, m_base.getPosition().y);
+}
+
+//void Game::processMouseEvents(sf::Event t_mouseEvent)
 //{
-//	base.setSize(sf::Vector2f(50, 50));
-//	base.setFillColor(sf::Color(255, 255, 0));
-//	base.setPosition(350, 500);
+//	sf::Vertex lineStart{}; // start point of line
+//	sf::Vertex lineEnd{}; // end point of line
+//	sf::Vector2f mouseClick{}; // location of mouse click 
+//	
+//
+//
+//
+//	if (sf::Mouse::Left == t_mouseEvent.mouseButton.button)
+//	{
+//		lineStart = m_base.getPosition();
+//		mouseClick = sf::Vector2f{ static_cast<float>(t_mouseEvent.mouseButton.x),static_cast<float>(t_mouseEvent.mouseButton.y) };
+//	}
+//
 //}
