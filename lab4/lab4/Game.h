@@ -21,6 +21,8 @@ private:
 	void setupFontAndText();
 	void setupGround();
 	void setupBase();
+	void setupPowerBar();
+	void setupAsteriod();
 	sf::RenderWindow m_window; // main SFML window
 	sf::Font m_ArialBlackfont; // font used by message
 	sf::Text m_welcomeMessage; // text used for message on screen
@@ -28,9 +30,12 @@ private:
 	sf::Sprite m_logoSprite; // sprite used for sfml logo
 	bool m_exitGame; // control exiting game
 	bool m_mouseClick = false;
+	bool m_missleFired = false;
+	sf::VertexArray m_laser{ sf::Lines };
+	sf::VertexArray m_asteriod{ sf::Lines };
 	sf::RectangleShape m_ground;
 	sf::RectangleShape m_base;
-	sf::RectangleShape m_laser;
+	sf::RectangleShape m_powerBar;
 
 };
 

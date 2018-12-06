@@ -16,6 +16,8 @@ Game::Game() :
 	setupGround(); // load texture
 	setupBase();
 	setupLaser();
+	setupAsteriod();
+	setupPowerBar();
 }
 
 /// <summary>
@@ -98,6 +100,8 @@ void Game::render()
 	m_window.draw(m_base);
 	m_window.draw(m_ground);
 	m_window.draw(m_laser);
+	m_window.draw(m_asteriod);
+	m_window.draw(m_powerBar);
 	m_window.display();
 }
 
@@ -145,24 +149,35 @@ void Game::setupBase()
 
 void Game::setupLaser()
 {
-	m_laser.setSize(sf::Vector2f(0,0));
-	m_laser.setFillColor(sf::Color(255, 0, 0));
-	m_laser.setPosition(m_base.getPosition().x, m_base.getPosition().y);
+	m_laser.append(sf::Vertex{ m_base.getPosition(),sf::Color::Red});
+	m_laser.append(sf::Vertex{sf::Vector2f{ 25.0f,51.0f }, sf::Color::Red});
 }
 
-//void Game::processMouseEvents(sf::Event t_mouseEvent)
-//{
-//	sf::Vertex lineStart{}; // start point of line
-//	sf::Vertex lineEnd{}; // end point of line
-//	sf::Vector2f mouseClick{}; // location of mouse click 
-//	
-//
-//
-//
-//	if (sf::Mouse::Left == t_mouseEvent.mouseButton.button)
-//	{
-//		lineStart = m_base.getPosition();
-//		mouseClick = sf::Vector2f{ static_cast<float>(t_mouseEvent.mouseButton.x),static_cast<float>(t_mouseEvent.mouseButton.y) };
-//	}
-//
-//}
+void Game::setupPowerBar()
+{
+	m_powerBar.setSize(sf::Vector2f(600, 25));
+	m_powerBar.setFillColor(sf::Color(255, 0, 0));
+	m_powerBar.setPosition(425,550);
+}
+void Game::setupAsteriod()
+{
+	m_asteriod.append(sf::Vertex{sf::Vector2f{0.0f,0.0f},sf::Color::White});
+	m_asteriod.append(sf::Vertex{ sf::Vector2f{ 45.0f,78.0f }, sf::Color::White });
+}
+void Game::processMouseEvents(sf::Event t_mouseEvent)
+{
+	sf::Vertex lineStart{}; // start point of line
+	sf::Vertex lineEnd{}; // end point of line
+	sf::Vector2f mouseClick{}; // location of mouse click 
+	
+
+
+
+	if (sf::Mouse::Left == t_mouseEvent.mouseButton.button)
+	{
+		lineStart = m_base.getPosition();
+		mouseClick = sf::Vector2f{ static_cast<float>(t_mouseEvent.mouseButton.x),static_cast<float>(t_mouseEvent.mouseButton.y) };
+		lineEnd = mouseClick;
+	}
+
+}
