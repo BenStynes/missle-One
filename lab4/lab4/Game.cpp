@@ -15,7 +15,7 @@ Game::Game() :
 	setupFontAndText(); // load font 
 	setupGround(); // load texture
 	setupBase();
-	setupLaser();
+	
 	setupAsteriod();
 	setupPowerBar();
 }
@@ -75,8 +75,9 @@ void Game::processEvents()
 	}
 	if (sf::Event::MouseButtonPressed == event.type)
 	{
-		processMouseEvents(event); // keep code tidy
+		fireLaser(event); // keep code tidy
 	}
+
 }
 
 /// <summary>
@@ -85,10 +86,15 @@ void Game::processEvents()
 /// <param name="t_deltaTime">time interval per frame</param>
 void Game::update(sf::Time t_deltaTime)
 {
+
 	if (m_exitGame)
 	{
 		m_window.close();
 	}
+	
+	
+		laserPath();
+	
 }
 
 /// <summary>
@@ -147,15 +153,11 @@ void Game::setupBase()
 	m_base.setPosition(375, 500);
 }
 
-void Game::setupLaser()
-{
-	m_laser.append(sf::Vertex{ m_base.getPosition(),sf::Color::Red});
-	m_laser.append(sf::Vertex{sf::Vector2f{ 25.0f,51.0f }, sf::Color::Red});
-}
+
 
 void Game::setupPowerBar()
 {
-	m_powerBar.setSize(sf::Vector2f(600, 25));
+	m_powerBar.setSize(sf::Vector2f(1, 25));
 	m_powerBar.setFillColor(sf::Color(255, 0, 0));
 	m_powerBar.setPosition(425,550);
 }
@@ -164,20 +166,64 @@ void Game::setupAsteriod()
 	m_asteriod.append(sf::Vertex{sf::Vector2f{0.0f,0.0f},sf::Color::White});
 	m_asteriod.append(sf::Vertex{ sf::Vector2f{ 45.0f,78.0f }, sf::Color::White });
 }
-void Game::processMouseEvents(sf::Event t_mouseEvent)
+void Game::fireLaser(sf::Event t_mouseEvent)
 {
-	sf::Vertex lineStart{}; // start point of line
-	sf::Vertex lineEnd{}; // end point of line
-	sf::Vector2f mouseClick{}; // location of mouse click 
+	
 	
 
+	
 
 
 	if (sf::Mouse::Left == t_mouseEvent.mouseButton.button)
 	{
-		lineStart = m_base.getPosition();
-		mouseClick = sf::Vector2f{ static_cast<float>(t_mouseEvent.mouseButton.x),static_cast<float>(t_mouseEvent.mouseButton.y) };
-		lineEnd = mouseClick;
+	
+	
+	
+		m_mouseClick = true;
+	
+		
+			m_laserStart = m_base.getPosition();
+			m_clickPoint = sf::Vector2f{ static_cast<float>(t_mouseEvent.mouseButton.x),static_cast<float>(t_mouseEvent.mouseButton.y) };
+			sf::Vector2f distanceVec = m_clickPoint - m_laserStart;
+			m_tempName = vectorUnitVector(distanceVec);
+			m_laserPos = m_laserStart;
+
+		
+		
+
+	
+	
+	
 	}
 
+}
+///
+///
+///
+///
+///
+void Game::laserPath()
+{
+	
+
+	if (m_mouseClick)
+	{
+
+		m_laser.append(m_laserStart);
+
+
+
+		m_laserPos += m_tempName * (m_laserSpeed + 5);
+
+
+		m_laser.append(m_laserPos);
+		
+		m_drawLine = true;
+	}
+	else if (m_laserPos.y >= m_clickPoint.y)
+	{
+		m_laserPos = m_base.getPosition();
+		
+	}
+	
 }
