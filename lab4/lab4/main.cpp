@@ -21,7 +21,8 @@
 #endif 
 
 #include "game.h"
-
+#include <stdlib.h> 
+#include <time.h> 
 
 
 /// <summary>
@@ -30,6 +31,7 @@
 /// <returns>zero</returns>
 int main()
 {
+	srand(time(NULL));
 	Game game;
 	game.run();
 	return 0;
