@@ -76,6 +76,8 @@ void Game::processEvents()
 	if (sf::Event::MouseButtonPressed == event.type)
 	{
 		fireLaser(event); // keep code tidy
+		m_animate = false;
+		m_powerBarSizeIncrement = 1.0f;
 	}
 
 }
@@ -91,7 +93,7 @@ void Game::update(sf::Time t_deltaTime)
 	{
 		m_window.close();
 	}
-	
+
 	if (m_missleFired == true)
 	{
 		laserPath();
@@ -104,11 +106,15 @@ void Game::update(sf::Time t_deltaTime)
 	{
 		asteroidMovement();
 	}
-	if (m_asteriodSpawned == false)
+	if (m_asteriodRespawn == true)
+
 	{
-		setupAsteriod();
+		asteroidRespawn();
 	}
-	
+	if (m_animate == true)
+	{
+		animatePowerbar();
+	}
 }
 
 /// <summary>
@@ -116,20 +122,28 @@ void Game::update(sf::Time t_deltaTime)
 /// </summary>
 void Game::render()
 {
-	m_window.clear();
-	m_window.draw(m_base);
-	m_window.draw(m_ground);
-	if (m_drawLine == true)
+	if (m_asteroidPos.y <= 575)
 	{
-		m_window.draw(m_laser);
+		m_window.clear();
+		m_window.draw(m_base);
+		m_window.draw(m_ground);
+		if (m_drawLine == true)
+		{
+			m_window.draw(m_laser);
+		}
+		if (m_drawExplosion == true)
+		{
+			m_window.draw(m_explosion);
+		}
+		m_window.draw(m_asteriod);
+		m_window.draw(m_powerBar);
+			
+		m_window.display();
 	}
-	if (m_drawExplosion == true)
+	else
 	{
-		m_window.draw(m_explosion);
+		m_window.draw(m_scoreText);
 	}
-	m_window.draw(m_asteriod);
-	m_window.draw(m_powerBar);
-	m_window.display();
 }
 
 /// <summary>
@@ -141,14 +155,10 @@ void Game::setupFontAndText()
 	{
 		std::cout << "problem loading arial black font" << std::endl;
 	}
-	m_welcomeMessage.setFont(m_ArialBlackfont);
-	m_welcomeMessage.setString("SFML Game");
-	m_welcomeMessage.setStyle(sf::Text::Underlined | sf::Text::Italic | sf::Text::Bold);
-	m_welcomeMessage.setPosition(40.0f, 40.0f);
-	m_welcomeMessage.setCharacterSize(80);
-	m_welcomeMessage.setOutlineColor(sf::Color::Red);
-	m_welcomeMessage.setFillColor(sf::Color::Black);
-	m_welcomeMessage.setOutlineThickness(3.0f);
+
+	m_scoreText.setFont(m_ArialBlackfont);
+	m_scoreText.setCharacterSize(12);
+	m_AltitudeBarText.setPosition(0, 550);
 
 }
 
@@ -172,6 +182,7 @@ void Game::setupBase()
 	m_base.setSize(sf::Vector2f(50,50));
 	m_base.setFillColor(sf::Color(255, 255, 0));
 	m_base.setPosition(375, 500);
+	m_animate = true;
 }
 
 
@@ -185,30 +196,11 @@ void Game::setupPowerBar()
 
 void Game::setupAsteriod()
 {
-
-
-	if (m_asteriodSpawned == true)
-	{
-			
+		
 		sf::Vector2f enemyDistanceVec = m_asteroidEnd - m_asteroidStart;
 		m_asteroidTempName = vectorUnitVector(enemyDistanceVec);
 
 		m_asteroidPos = m_asteroidStart;
-
-
-	}
-	if (m_asteriodSpawned == false)
-	{
-		
-		m_asteroidRespawnTimer++;
-		
-			if (m_asteroidRespawnTimer == m_asteroidRespawnMaxTimer)
-			{
-				m_asteriodSpawned = true;
-				m_asteroidStart = { 1.0f * (rand() % 800),0.0f };
-				m_asteroidEnd = { 1.0f * (rand() % 800),600.0f };
-			}
-	}
 
 }
 
@@ -222,15 +214,18 @@ void Game::laserExplosion()
 	{
 		m_exploded = false;
 		m_drawExplosion = false;
+		m_animate = true;
 	}
 	if (vectorLength(sf::Vector2f(m_asteroidPos) - m_explosion.getPosition()) < m_sizeOfExplosion)
 	{
 		m_asteriodSpawned = false;
+		m_asteriodRespawn = true;
 		m_asteriod.clear();
 		m_exploded = false;
 		m_drawExplosion = false;
-		
-			
+		m_animate = true;
+		m_scoreValue += 5;
+		m_scoreText.setString(std::to_string(m_scoreValue));
 		
 	}
 
@@ -270,7 +265,7 @@ void Game::laserPath()
 
 
 
-	m_laserPos += m_tempName * (m_laserSpeed + 3);
+	m_laserPos += m_tempName * (m_laserSpeed);
 
 	sf::Vertex lasersPath{ m_laserPos,sf::Color::Red };
 
@@ -278,13 +273,13 @@ void Game::laserPath()
 		
 		m_drawLine = true;
 	
-	 if (m_laserPos.y <= m_clickPoint.y)
+	 if (m_laserPos.y <=  m_maxAltitude.y || m_laserPos.y <= m_clickPoint.y)
 	{
 		 
-		m_laserPos = m_clickPoint;
+	
 		m_laser.clear();
 		m_missleFired = false;
-		m_explosion.setPosition(m_clickPoint);
+		m_explosion.setPosition(m_laserPos);
 		m_exploded = true;
 		m_drawExplosion = true;
 	}
@@ -300,7 +295,7 @@ void Game::asteroidMovement()
 	m_asteriod.append(asteroidStartPoint);
 
 
-	m_asteroidPos += m_asteroidTempName * (m_asteroidSpeed + 0.5f);
+	m_asteroidPos += m_asteroidTempName * (m_asteroidSpeed);
 
 	sf::Vertex asteroidPath{ m_asteroidPos,sf::Color::White };
 
@@ -310,4 +305,47 @@ void Game::asteroidMovement()
 		m_asteroidEnd = asteroidPath.position;
 
 	}
+	if (m_asteroidPos.y < 575);
+	{
+
+		m_gameOver = true;
+
+	}
 }
+
+void Game::asteroidRespawn()
+{
+
+		m_asteroidRespawnTimer++;
+
+		if (m_asteroidRespawnTimer == m_asteroidRespawnMaxTimer)
+		{
+			m_asteroidRespawnTimer = 0;
+			m_asteriodSpawned = true;
+			m_asteroidStart = { 1.0f * (rand() % 800),0.0f };
+			m_asteroidEnd = { 1.0f * (rand() % 800),600.0f };
+			m_asteriodRespawn = false;
+			setupAsteriod();
+		
+		}
+	
+
+}
+void Game::animatePowerbar()
+{   
+	m_animate = true;
+	if (m_powerBarSizeIncrement >= m_powerbarMaxSize)
+	{
+		m_animate = false;
+	}
+	if (m_powerBarSizeIncrement < m_powerbarMaxSize)
+	{
+		
+		m_powerBarSizeIncrement++;
+		m_maxAltitude.y = 575.0f - (m_powerBarSizeIncrement * 2);
+		m_powerBar.setSize(sf::Vector2f{ m_powerBarSizeIncrement,25.0f });
+	}
+
+
+}
+
