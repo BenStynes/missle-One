@@ -1,9 +1,15 @@
 /// <summary>
-/// Empty Project for SFML[2.5.0]
-/// 
-/// 
+///Lab 4 missle one
+/// a game where a Asteroid comes fromthe top of the screen
+/// towards the bottom if you  hit it with the laser you gain
+/// 5 points if it hits the ground you lose
+/// Estimated Time : 16 HOURS
+/// Actual Time: 20  Hours
+/// Would put the times i worked on it on ,but i forgot to keep track.
+/// No Known Bugs
+/// Extra fEATURES NOT IMPLEMENTED
 /// @author Ben Stynes
-/// @date May 2018
+/// @date 10th December 2018
 /// </summary>
 
 #ifdef _DEBUG 
