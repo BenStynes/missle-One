@@ -76,8 +76,8 @@ void Game::processEvents()
 	if (sf::Event::MouseButtonPressed == event.type)
 	{
 		fireLaser(event); // keep code tidy
-		m_animate = false;
-		m_powerBarSizeIncrement = 1.0f;
+		m_animate = false;//sets the power bar to stop moving 
+		m_powerBarSizeIncrement = 1.0f;//sets the increment back to 1
 	}
 
 }
@@ -96,7 +96,7 @@ void Game::update(sf::Time t_deltaTime)
 
 	if (m_missleFired == true)
 	{
-		laserPath();
+		laserPath();//executes
 	}
 	if (m_exploded == true)
 	{
@@ -122,9 +122,10 @@ void Game::update(sf::Time t_deltaTime)
 /// </summary>
 void Game::render()
 {
+	m_window.clear();
+
 	if (m_asteroidPos.y <= 575)
 	{
-		m_window.clear();
 		m_window.draw(m_base);
 		m_window.draw(m_ground);
 		if (m_drawLine == true)
@@ -137,13 +138,18 @@ void Game::render()
 		}
 		m_window.draw(m_asteriod);
 		m_window.draw(m_powerBar);
-			
+		m_window.draw(m_AltitudeBarText);
 		m_window.display();
+			
 	}
 	else
 	{
 		m_window.draw(m_scoreText);
+		m_window.draw(m_gameOverText);
+		m_window.display();
 	}
+
+	
 }
 
 /// <summary>
@@ -156,19 +162,31 @@ void Game::setupFontAndText()
 		std::cout << "problem loading arial black font" << std::endl;
 	}
 
-	m_scoreText.setFont(m_ArialBlackfont);
-	m_scoreText.setCharacterSize(12);
-	m_AltitudeBarText.setPosition(0, 550);
+	m_scoreText.setFont(m_ArialBlackfont);//
+	m_scoreText.setCharacterSize(30);//
+	m_scoreText.setPosition(200, 450);//
+	m_scoreText.setFillColor(sf::Color::White);//
+	m_scoreText.setString("Score: " + std::to_string(m_scoreValue));
+	m_AltitudeBarText.setPosition(0, 580);
+	m_AltitudeBarText.setCharacterSize(12);
+	m_AltitudeBarText.setFont(m_ArialBlackfont);
+	m_AltitudeBarText.setFillColor(sf::Color::White);
+	m_AltitudeBarText.setString("Altitude:");
+	m_gameOverText.setFont(m_ArialBlackfont);
+	m_gameOverText.setFillColor(sf::Color::White);
+	m_gameOverText.setCharacterSize(59);
+	m_gameOverText.setString("Game Over");
+	m_gameOverText.setPosition(200, 300);
 
 }
 
 /// <summary>
-/// load the texture and setup the sprite for the logo
+/// 
 /// </summary>
 void Game::setupGround()
 {
 	 m_ground.setSize(sf::Vector2f(800, 50));
-	 m_ground.setFillColor(sf::Color(0,100,0));
+	 m_ground.setFillColor(sf::Color::Green);
 	 m_ground.setPosition(0,550);
 }
 
@@ -191,7 +209,7 @@ void Game::setupPowerBar()
 {
 	m_powerBar.setSize(sf::Vector2f(1, 25));
 	m_powerBar.setFillColor(sf::Color(255, 0, 0));
-	m_powerBar.setPosition(425,550);
+	m_powerBar.setPosition(75,580);
 }
 
 void Game::setupAsteriod()
@@ -305,12 +323,7 @@ void Game::asteroidMovement()
 		m_asteroidEnd = asteroidPath.position;
 
 	}
-	if (m_asteroidPos.y < 575);
-	{
 
-		m_gameOver = true;
-
-	}
 }
 
 void Game::asteroidRespawn()
