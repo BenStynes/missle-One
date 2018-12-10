@@ -37,6 +37,8 @@ private:
 	bool m_exploded = false;
 	bool m_drawExplosion = false;
 	bool m_asteriodSpawned = true;
+	int   m_asteroidRespawnTimer = 0;
+	int   m_asteroidRespawnMaxTimer = rand() % 25;
 	float m_distanceBetweenBaseAndClick = 0.0f;
 	float m_laserSpeed = 0.2f;
 	float m_sizeOfExplosion = 0.0f;
@@ -49,8 +51,9 @@ private:
 	sf::Vector2f m_laserStart{0,0};
 	sf::Vector2f m_clickPoint{ 0,0 };
 	sf::Vector2f m_tempName{ 0,0 };
-	sf::Vector2f m_asteroidStart{ 1.0f *(rand() % 800),0.0f };
+
 	sf::Vector2f m_asteroidTempName{ 0,0 };
+	sf::Vector2f m_asteroidStart{ 1.0f *(rand() % 800),0.0f };
 	sf::Vector2f m_asteroidEnd{ 1.0f * (rand() % 800),600.0f };
 	sf::Vector2f m_asteroidPos{ 0,0 };
 	sf::Vector2f m_laserPos{ 0,0 };
